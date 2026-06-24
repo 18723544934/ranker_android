@@ -1,0 +1,62 @@
+已完成 PerfTop Android 应用的基础架构和核心功能开发！
+
+已完成的工作
+Android 客户端
+项目基础结构
+
+Gradle 配置（Kotlin DSL）
+AndroidManifest.xml 和资源文件
+Material 3 主题配置
+数据层
+
+领域模型：Hardware, Category, Specs, Benchmark, PriceInfo
+Room 实体和 DAO：HardwareEntity, BenchmarkEntity, FavoriteEntity, HistoryEntity
+Repository：HardwareRepository
+Hilt 依赖注入：DatabaseModule, NetworkModule
+网络层
+
+Retrofit API 接口：PerfTopApi
+DTO 和序列化配置
+展示层
+
+导航框架：Screen, PerfTopNavGraph
+排行榜功能：RankingScreen, RankingViewModel, HardwareListItem
+后端服务
+项目配置
+
+Python 依赖（FastAPI、SQLAlchemy、Scrapy、Celery）
+Docker Compose 配置（PostgreSQL、Redis、API、Celery、Flower）
+数据库
+
+SQLAlchemy 模型：Hardware, Benchmark, Favorite, History
+数据库连接配置
+API 服务
+
+FastAPI 主应用
+核心端点：硬件列表、详情、对比、搜索、筛选选项
+项目结构
+
+D:\performance_ranker_android\
+├── app/                          # Android 客户端
+│   ├── src/main/java/com/perftop/android/
+│   │   ├── data/                # 数据层
+│   │   ├── domain/              # 领域层
+│   │   ├── presentation/         # 展示层
+│   │   ├── core/               # 核心组件
+│   │   └── MainActivity.kt
+│   └── build.gradle.kts
+└── backend/                       # 后端服务
+    ├── api/                     # FastAPI 应用
+    ├── database/                # 数据库模型
+    ├── spiders/                 # Scrapy 爬虫（待实现）
+    ├── requirements.txt
+    └── docker-compose.yml
+后续工作
+详情页实现
+对比功能
+天梯图
+收藏与历史
+筛选功能
+后端爬虫开发
+测试与优化
+项目可以在 Android Studio 中打开并运行。
