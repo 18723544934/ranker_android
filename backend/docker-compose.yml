@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: perftop-postgres
+    environment:
+      POSTGRES_DB: perftop
+      POSTGRES_USER: perftop
+      POSTGRES_PASSWORD: perftop_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - perftop-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: perftop-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - perftop-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: perftop-api
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://perftop:perftop_password@postgres:5432/perftop
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - perftop-network
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: perftop-celery
+    command: celery -A tasks.celery_app worker --loglevel=info
+    volumes:
+      - ./backend:/app
+    environment:
+      DATABASE_URL: postgresql://perftop:perftop_password@postgres:5432/perftop
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - perftop-network
+
+  flower:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: perftop-flower
+    command: celery -A tasks.celery_app flower --port=5555
+    volumes:
+      - ./backend:/app
+    ports:
+      - "5555:5555"
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - redis
+    networks:
+      - perftop-network
+
+volumes:
+  postgres_data:
+
+networks:
+  perftop-network:
+    driver: bridge
