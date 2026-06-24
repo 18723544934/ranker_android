@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.perftop.android.presentation.ranking.RankingScreen
 
 data class BottomNavItem(
     val screen: Screen,
@@ -95,11 +96,6 @@ fun PerfTopNavGraph() {
             }
         }
     }
-}
-
-@Composable
-private fun RankingScreen(onNavigateToDetail: (Int) -> Unit) {
-    Text("排行榜页面 - 待实现")
 }
 
 @Composable
