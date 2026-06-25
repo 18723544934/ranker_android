@@ -16,6 +16,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.perftop.android.presentation.compare.CompareScreen
+import com.perftop.android.presentation.detail.DetailScreen
+import com.perftop.android.presentation.favorites.FavoritesScreen
+import com.perftop.android.presentation.ladder.LadderScreen
 import com.perftop.android.presentation.ranking.RankingScreen
 
 data class BottomNavItem(
@@ -99,26 +103,6 @@ fun PerfTopNavGraph() {
 }
 
 @Composable
-private fun LadderScreen(onNavigateToDetail: (Int) -> Unit) {
-    Text("天梯图页面 - 待实现")
-}
-
-@Composable
-private fun CompareScreen(onNavigateToDetail: (Int) -> Unit) {
-    Text("对比页面 - 待实现")
-}
-
-@Composable
-private fun FavoritesScreen(onNavigateToDetail: (Int) -> Unit) {
-    Text("收藏页面 - 待实现")
-}
-
-@Composable
 private fun SettingsScreen() {
     Text("设置页面 - 待实现")
-}
-
-@Composable
-private fun DetailScreen(hardwareId: Int, onNavigateBack: () -> Unit) {
-    Text("详情页面 - ID: $hardwareId")
 }

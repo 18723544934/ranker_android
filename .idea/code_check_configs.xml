@@ -2,6 +2,7 @@
 <project version="4">
   <component name="CodeCheckProjectSettings">
     <option name="asyncHistoryTask" value="true" />
+    <option name="branch" value="master" />
     <option name="disabledLocalRuleIds">
       <set />
     </option>
@@ -22,6 +23,7 @@
       </set>
     </option>
     <option name="remote" value="false" />
-    <option name="tempRepoUrl" value="" />
+    <option name="repositoryUrl" value="https://github.com/18723544934/ranker_android.git" />
+    <option name="tempRepoUrl" value="https://github.com/18723544934/ranker_android.git" />
   </component>
 </project>
