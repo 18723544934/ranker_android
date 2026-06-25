@@ -6,175 +6,237 @@ Scrapy Pipelines
 import json
 import os
 from datetime import datetime
-from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
+import psycopg2
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class DatabasePipeline:
-    """将数据保存到数据库的 Pipeline"""
+    """
+    数据库管道
+    将抓取的硬件数据保存到 PostgreSQL 数据库
+    """
 
     def __init__(self):
-        self.database_url = os.getenv('DATABASE_URL', 'postgresql://perftop:perftop_password@localhost:5432/perftop')
-        # 这里应该初始化数据库连接
-        # 实际项目中应该使用 SQLAlchemy 或直接的数据库连接
-        self.items_seen = set()
+        self.connection = None
+        self.cursor = None
 
-    def process_item(self, item, spider):
-        adapter = ItemAdapter(item)
-        if adapter.is_valid():
-            # 检查是否已经处理过该硬件（通过名称和类别）
-            item_key = f"{adapter.get('name')}_{adapter.get('category')}"
-            if item_key in self.items_seen:
-                spider.logger.info(f"跳过重复项: {adapter.get('name')}")
-                raise DropItem(f"Duplicate item: {adapter.get('name')}")
-
-            self.items_seen.add(item_key)
-
-            # 这里应该将数据保存到数据库
-            # 示例代码（需要根据实际数据库结构调整）:
-            # hardware = Hardware(
-            #     name=adapter.get('name'),
-            #     brand=adapter.get('brand'),
-            #     category=adapter.get('category'),
-            #     architecture=adapter.get('architecture'),
-            #     overall_score=adapter.get('overall_score'),
-            #     specs_json=adapter.get('specs'),
-            #     launch_date=adapter.get('launch_date')
-            # )
-            # self.session.add(hardware)
-            # self.session.commit()
-
-            spider.logger.info(f"保存硬件到数据库: {adapter.get('name')}")
-            return item
-        else:
-            spider.logger.error(f"无效的硬件数据: {item}")
-            raise DropItem("Invalid hardware data")
+    def open_spider(self, spider):
+        """爬虫开始时打开数据库连接"""
+        try:
+            self.connection = psycopg2.connect(
+                os.getenv('DATABASE_URL', 'postgresql://perftop:perftop_password@localhost:5432/perftop')
+            )
+            self.cursor = self.connection.cursor()
+            spider.logger.info("数据库连接已建立")
+        except Exception as e:
+            spider.logger.error(f"数据库连接失败: {str(e)}")
 
     def close_spider(self, spider):
-        # 关闭数据库连接
-        pass
+        """爬虫结束时关闭数据库连接"""
+        if self.cursor:
+            self.cursor.close()
+        if self.connection:
+            self.connection.close()
+        spider.logger.info("数据库连接已关闭")
+
+    def process_item(self, item, spider):
+        """处理每个抓取的硬件项"""
+        try:
+            # 检查硬件是否已存在
+            self.cursor.execute(
+                "SELECT id FROM hardwares WHERE name = %s AND category = %s",
+                (item.get('name'), item.get('category'))
+            )
+            existing = self.cursor.fetchone()
+
+            if existing:
+                # 更新现有硬件
+                self.cursor.execute("""
+                    UPDATE hardwares SET
+                        brand = %s,
+                        architecture = %s,
+                        launch_date = %s,
+                        specs_json = %s,
+                        overall_score = %s,
+                        updated_at = %s
+                    WHERE id = %s
+                """, (
+                    item.get('brand'),
+                    item.get('architecture'),
+                    item.get('launch_date'),
+                    json.dumps(item.get('specs', {})),
+                    item.get('overall_score'),
+                    datetime.now(),
+                    existing[0]
+                ))
+                hardware_id = existing[0]
+            else:
+                # 插入新硬件
+                self.cursor.execute("""
+                    INSERT INTO hardwares (name, brand, category, architecture, launch_date, specs_json, overall_score, created_at, updated_at)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    RETURNING id
+                """, (
+                    item.get('name'),
+                    item.get('brand'),
+                    item.get('category'),
+                    item.get('architecture'),
+                    item.get('launch_date'),
+                    json.dumps(item.get('specs', {})),
+                    item.get('overall_score'),
+                    datetime.now(),
+                    datetime.now()
+                ))
+                hardware_id = self.cursor.fetchone()[0]
+
+            self.connection.commit()
+            spider.logger.info(f"已保存硬件: {item.get('name')} (ID: {hardware_id})")
+
+            # 处理跑分数据
+            benchmarks = item.get('benchmarks', [])
+            for benchmark in benchmarks:
+                self._save_benchmark(hardware_id, benchmark, spider)
+
+            return item
+
+        except Exception as e:
+            spider.logger.error(f"保存硬件失败: {str(e)}")
+            self.connection.rollback()
+            raise DropItem(f"数据库保存失败: {str(e)}")
+
+    def _save_benchmark(self, hardware_id, benchmark, spider):
+        """保存跑分数据"""
+        self.cursor.execute("""
+            INSERT INTO benchmarks (hardware_id, source, metric, score, unit, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            ON CONFLICT (hardware_id, source, metric) DO UPDATE SET
+                score = EXCLUDED.score,
+                unit = EXCLUDED.unit,
+                created_at = %s
+        """, (
+            hardware_id,
+            benchmark['source'],
+            benchmark['metric'],
+            benchmark['score'],
+            benchmark['unit'],
+            datetime.now()
+        ))
+        self.connection.commit()
 
 
 class JsonWriterPipeline:
-    """将数据保存到 JSON 文件的 Pipeline"""
+    """
+    JSON 文件写入管道
+    将抓取的数据保存为 JSON 文件
+    """
 
     def __init__(self):
-        self.output_dir = getattr(self, 'output_dir', 'output')
-        os.makedirs(self.output_dir, exist_ok=True)
-        self.current_file = None
-        self.current_data = []
-        self.file_counter = 0
+        self.files = {}
 
     def open_spider(self, spider):
-        spider_name = spider.name
+        """爬虫开始时创建输出文件"""
+        output_dir = spider.settings.get('OUTPUT_DIR', 'output')
+        os.makedirs(output_dir, exist_ok=True)
+
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        self.current_file = os.path.join(
-            self.output_dir,
-            f'{spider_name}_{timestamp}.json'
-        )
-        self.current_data = []
-        self.file_counter = 0
-        spider.logger.info(f"开始写入文件: {self.current_file}")
+        filename = f"hardware_{timestamp}.json"
+        filepath = os.path.join(output_dir, filename)
 
-    def process_item(self, item, spider):
-        adapter = ItemAdapter(item)
-        if adapter.is_valid():
-            self.current_data.append(dict(item))
-            self.file_counter += 1
-
-            # 每100条数据写入一次文件
-            if self.file_counter >= 100:
-                self._write_to_file()
-                self.file_counter = 0
-            return item
-        else:
-            spider.logger.error(f"跳过无效项: {item}")
-            return None
+        self.files[spider] = open(filepath, 'w', encoding='utf-8')
+        spider.logger.info(f"创建输出文件: {filepath}")
 
     def close_spider(self, spider):
-        # 写入剩余数据
-        if self.current_data:
-            self._write_to_file()
-
-        if self.current_file and os.path.exists(self.current_file):
-            spider.logger.info(f"完成写入文件: {self.current_file} (共 {self.file_counter} 条)")
-
-    def _write_to_file(self):
-        """将当前数据写入文件"""
-        if not self.current_file or not self.current_data:
-            return
-
-        try:
-            # 追加模式写入
-            mode = 'a' if os.path.exists(self.current_file) else 'w'
-            with open(self.current_file, mode, encoding='utf-8') as f:
-                if mode == 'w':
-                    # 新文件，写入数组开头
-                    f.write('[\n')
-                    for i, item in enumerate(self.current_data):
-                        if i > 0:
-                            f.write(',\n')
-                        json.dump(item, f, ensure_ascii=False, indent=2)
-                    f.write('\n]')
-                else:
-                    # 追加模式，需要处理 JSON 数组格式
-                    # 这里简化处理，实际应该更复杂
-                    f.write(',\n')
-                    for i, item in enumerate(self.current_data):
-                        if i > 0:
-                            f.write(',\n')
-                        json.dump(item, f, ensure_ascii=False, indent=2)
-                    f.write('\n]')
-
-            self.current_data = []
-        except Exception as e:
-            spider.logger.error(f"写入文件失败: {e}")
-
-
-class DeduplicationPipeline:
-    """去重 Pipeline - 根据名称和类别去重"""
-
-    def __init__(self):
-        self.seen = set()
+        """爬虫结束时关闭文件"""
+        if spider in self.files:
+            self.files[spider].close()
+            spider.logger.info(f"输出文件已保存")
+            del self.files[spider]
 
     def process_item(self, item, spider):
-        adapter = ItemAdapter(item)
-        key = f"{adapter.get('name')}_{adapter.get('category')}_{adapter.get('brand')}"
+        """将每个项目写入 JSON 文件"""
+        line = json.dumps(dict(item), ensure_ascii=False) + "\n"
+        self.files[spider].write(line)
+        return item
 
-        if key in self.seen:
-            spider.logger.info(f"发现重复项，跳过: {adapter.get('name')}")
-            raise DropItem(f"Duplicate hardware: {adapter.get('name')}")
 
-        self.seen.add(key)
+class DuplicateFilterPipeline:
+    """
+    重复数据过滤管道
+    过滤掉重复的硬件数据
+    """
+
+    def __init__(self):
+        self.seen_items = set()
+
+    def process_item(self, item, spider):
+        """检查是否已处理过相同的硬件"""
+        item_key = (item.get('name'), item.get('category'))
+        if item_key in self.seen_items:
+            spider.logger.debug(f"跳过重复项: {item.get('name')}")
+            raise DropItem(f"重复项: {item.get('name')}")
+
+        self.seen_items.add(item_key)
         return item
 
 
 class DataValidationPipeline:
-    """数据验证 Pipeline - 确保数据完整和有效"""
+    """
+    数据验证管道
+    验证抓取的数据是否符合要求
+    """
 
     def process_item(self, item, spider):
-        adapter = ItemAdapter(item)
-
-        # 验证必填字段
+        """验证数据完整性"""
         required_fields = ['name', 'brand', 'category', 'overall_score']
+
         for field in required_fields:
-            if not adapter.get(field):
-                spider.logger.error(f"缺少必填字段: {field}")
-                raise DropItem(f"Missing required field: {field}")
+            if not item.get(field):
+                spider.logger.warning(f"缺少必需字段: {field}")
+                raise DropItem(f"缺少必需字段: {field}")
 
         # 验证分数范围
-        score = adapter.get('overall_score')
-        if score is not None and (score < 0 or score > 100000):
-            spider.logger.warning(f"分数超出合理范围: {score}")
+        score = item.get('overall_score', 0)
+        if not isinstance(score, (int, float)) or score < 0:
+            spider.logger.warning(f"无效的分数: {score}")
+            raise DropItem(f"无效的分数: {score}")
 
-        # 验证规格 JSON
-        specs = adapter.get('specs')
-        if specs:
-            try:
-                if isinstance(specs, str):
-                    json.loads(specs)
-            except json.JSONDecodeError:
-                spider.logger.error(f"规格 JSON 格式错误: {specs}")
-                raise DropItem("Invalid specs JSON format")
+        # 验证分类
+        valid_categories = ['pc_cpu', 'pc_gpu', 'mobile_cpu', 'mobile_gpu']
+        if item.get('category') not in valid_categories:
+            spider.logger.warning(f"无效的分类: {item.get('category')}")
+            raise DropItem(f"无效的分类: {item.get('category')}")
 
+        return item
+
+
+class StatsPipeline:
+    """
+    统计管道
+    记录爬虫运行统计信息
+    """
+
+    def __init__(self):
+        self.item_count = 0
+        self.start_time = None
+
+    def open_spider(self, spider):
+        """爬虫开始时记录开始时间"""
+        self.start_time = datetime.now()
+        spider.logger.info(f"爬虫开始: {self.start_time}")
+
+    def close_spider(self, spider):
+        """爬虫结束时输出统计信息"""
+        if self.start_time:
+            duration = datetime.now() - self.start_time
+            spider.logger.info(
+                f"爬虫结束 - 耗时: {duration}, "
+                f"处理项目数: {self.item_count}"
+            )
+
+    def process_item(self, item, spider):
+        """统计处理的项目数量"""
+        self.item_count += 1
         return item

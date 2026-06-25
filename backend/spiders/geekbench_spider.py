@@ -5,7 +5,7 @@ Geekbench 数据爬虫
 
 import scrapy
 from scrapy.http import FormRequest
-from items import HardwareItem, BenchmarkItem
+from .items import HardwareItem, BenchmarkItem
 import json
 from datetime import datetime
 

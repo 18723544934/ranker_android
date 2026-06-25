@@ -21,6 +21,7 @@ import com.perftop.android.presentation.detail.DetailScreen
 import com.perftop.android.presentation.favorites.FavoritesScreen
 import com.perftop.android.presentation.ladder.LadderScreen
 import com.perftop.android.presentation.ranking.RankingScreen
+import com.perftop.android.presentation.settings.SettingsScreen
 
 data class BottomNavItem(
     val screen: Screen,
@@ -89,7 +90,7 @@ fun PerfTopNavGraph() {
                 })
             }
             composable(Screen.Settings.route) {
-                SettingsScreen()
+                SettingsScreen(onNavigateBack = { /* TODO */ })
             }
             composable(Screen.Detail.route) { backStackEntry ->
                 val hardwareId = backStackEntry.arguments?.getString("hardwareId")?.toIntOrNull() ?: return@composable
