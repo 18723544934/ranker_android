@@ -1,165 +1,54 @@
 {
   "cpu_spec_template": {
-    "basic_info": {
-      "id": "整数，硬件唯一标识",
-      "name": "字符串，CPU完整名称",
-      "brand": "字符串，品牌（Intel/AMD/Apple/高通/联发科/华为等）",
-      "series": "字符串，系列名称",
-      "model": "字符串，型号编号",
-      "part_number": "字符串，部件编号（如 100-000000926）",
-      "category": "字符串，分类（PC_CPU/MOBILE_CPU/SOC）",
-      "market": "字符串，市场定位（Desktop/Mobile/Server/Embedded）",
-      "codename": "字符串，研发代号",
-      "generation": "字符串，代数（如 Ryzen 7 / 13th Gen）",
-      "launch_date": "字符串，发布日期（YYYY-MM-DD）",
-      "production_status": "字符串，生产状态（Active/Discontinued/Upcoming）",
-      "bundled_cooler": "字符串，附带散热器（None/Wraith Stealth/Wraith Spire等）"
-    },
-    "architecture": {
-      "architecture": "字符串，微架构名称",
-      "process_node": "字符串，制程工艺（如 4nm/Intel 4/TSMC 3nm）",
-      "foundry": "字符串，代工厂（TSMC/Intel/GF等）",
-      "io_process_node": "字符串，I/O制程（如 12nm）",
-      "instruction_set": "字符串，指令集（x86-64/ARM64/ARMv8.2-A等）",
-      "extensions": "数组，扩展指令集（SSE4.2/AVX-512/NEON等）"
-    },
-    "core_config": {
-      "total_cores": "整数，总核心数",
-      "performance_cores": "整数，性能核心数（P-Core/Big Core）",
-      "efficiency_cores": "整数，能效核心数（E-Core/Little Core）",
-      "total_threads": "整数，总线程数",
-      "smp_cpus": "整数，SMP支持CPU数量",
-      "core_complex": "字符串，核心组合描述（如 6P+18E）",
-      "integrated_graphics": "字符串，核显（N/A/UHD Graphics 770等）"
-    },
-    "clock_speed": {
-      "base_clock": "浮点数，基础频率（GHz）",
-      "boost_clock": "浮点数，加速频率（GHz）",
-      "max_turbo_clock": "浮点数，最大睿频（GHz）",
-      "all_core_boost": "浮点数，全核心加速频率（GHz）",
-      "min_clock": "浮点数，最低频率（GHz）",
-      "bus_speed": "浮点数，总线频率（MHz）",
-      "multiplier": "字符串，倍频（如 34.0x）",
-      "multiplier_unlocked": "布尔值，倍频是否解锁"
-    },
-    "cache": {
-      "l1_instruction_cache": "字符串，L1指令缓存（如 64 KB per core）",
-      "l1_data_cache": "字符串，L1数据缓存（如 48 KB per core）",
-      "l1_total": "字符串，L1总缓存",
-      "l2_cache": "字符串，L2缓存（如 512 KB per core）",
-      "l2_total": "字符串，L2总缓存",
-      "l3_cache": "字符串，L3缓存（如 32 MB shared）",
-      "l3_total": "字符串，L3总缓存",
-      "l4_cache": "字符串，L4缓存（部分CPU有）"
-    },
-    "memory": {
-      "memory_type": "字符串，支持内存类型（DDR5/DDR4/LPDDR5等）",
-      "rated_speed": "字符串，额定内存速度（如 3200 MT/s）",
-      "max_memory_size": "字符串，最大内存容量",
-      "memory_channels": "整数，内存通道数",
-      "memory_bus_width": "整数，内存总线宽度（bit）",
-      "memory_bandwidth": "字符串，内存带宽（如 51.2 GB/s）",
-      "max_memory_speed": "字符串，最大内存频率（如 DDR5-6400）",
-      "ecc_support": "布尔值，是否支持ECC"
-    },
+  "basic_info": {
+    "id": "整数，存储于数据库时的硬件唯一标识",
+    "name": "字符串，CPU完整名称（如 AMD Ryzen 9 7950X）",
+    "brand": "字符串，品牌（Intel/AMD/Apple/高通/联发科/华为等）",
+    "series": "字符串，系列名称（如 Ryzen 9 / Core i9）",
+    "model": "字符串，型号编号（如 7950X / 13900K）",
+    "category": "字符串，分类（PC_CPU/MOBILE_CPU/SOC）",
+    "market": "字符串，市场定位（Desktop/Mobile/Server/Embedded）",
+    "codename": "字符串，研发代号（如 Raphael / Raptor Lake）",
+    "launch_date": "字符串，发布日期（YYYY-MM-DD）"
+  },
+  "architecture": {
+    "architecture": "字符串，微架构名称（如 Zen 4 / Raptor Cove）",
+    "process_node": "字符串，制程工艺（如 TSMC 5nm FinFET / Intel 7）",
+    "foundry": "字符串，代工厂（TSMC/Intel/GF等）",
+    "instruction_set": "字符串，指令集（x86-64 / ARM64 / ARMv8.2-A）",
+    "extensions": "数组，扩展指令集（如 [SSE4.2, AVX-512, NEON]）"
+  },
+  "core_config": {
+    "total_cores": "整数，总物理核心数",
+    "performance_cores": "整数，性能核心数（P-Core / Big Core）",
+    "efficiency_cores": "整数，能效核心数（E-Core / Little Core）",
+    "total_threads": "整数，总线程数",
+    "core_complex": "字符串，核心组合描述（如 6P+18E / 8+16）",
+    "integrated_graphics": "字符串，核显名称（无则为 N/A，如 UHD Graphics 770）"
+  },
+  "clock_speed": {
+    "base_clock": "浮点数，基础频率（GHz）",
+    "boost_clock": "浮点数，加速/睿频频率（GHz）",
+    "max_turbo_clock": "浮点数，最大单核睿频（GHz）",
+    "all_core_boost": "浮点数，全核心加速频率（GHz）",
+    "multiplier_unlocked": "布尔值，倍频是否解锁（可超频）"
+  },
+  "cache": {
+    "l1_cache": "字符串，L1缓存总容量（如 1 MB）",
+    "l2_cache": "字符串，L2缓存总容量（如 16 MB）",
+    "l3_cache": "字符串，L3缓存总容量（如 64 MB）",
+    "l4_cache": "字符串，L4缓存总容量（极少见，默认空）"
+  },
+  "memory": {
+    "memory_type": "字符串，支持内存类型（如 DDR5 / DDR4 / LPDDR5）",
+    "max_memory_speed": "字符串，最大内存频率（如 DDR5-6400）",
+    "max_memory_size": "字符串，最大内存容量（如 128 GB）",
+    "memory_channels": "整数，内存通道数",
+    "ecc_support": "布尔值，是否支持ECC"
+  },
     "power": {
       "tdp": "字符串，热设计功耗（如 65 W）",
-      "base_power": "字符串，基础功耗（PBP）",
-      "max_power": "字符串，最大功耗（MTP）",
-      "ppt": "字符串，封装功耗跟踪（Package Power Tracking）",
-      "minimum_power": "字符串，最低功耗",
-      "cstate_support": "字符串，C-State支持",
-      "package_power_limit": "字符串，封装功耗限制"
+      "max_power": "字符串，最大功耗（MTP / PPT）（如 253 W）"
     },
-    "interface": {
-      "socket": "字符串，接口类型（LGA1851/AM4/BGA等）",
-      "pcie_version": "字符串，PCIe版本（PCIe 5.0/4.0）",
-      "pcie_lanes": "整数，PCIe通道数",
-      "pcie_description": "字符串，PCIe描述（如 Gen 4, 20 Lanes CPU only）",
-      "tdp_upgrade": "字符串，TDP升级支持",
-      "cooler_included": "布尔值，是否包含散热器"
-    },
-    "graphics": {
-      "igpu_name": "字符串，核显名称（如 UHD Graphics 770）",
-      "igpu_eu": "整数，核显执行单元数",
-      "igpu_clock": "浮点数，核显频率（GHz）",
-      "igpu_tech": "字符串，核显架构技术",
-      "display_outputs": "数组，支持的显示输出接口"
-    },
-    "features": {
-      "virtualization": "字符串，虚拟化支持（Intel VT-x/AMD-V）",
-      "secure_boot": "布尔值，安全启动支持",
-      "sgx": "布尔值，SGX支持",
-      "tpm": "字符串，TPM支持（2.0/1.2）",
-      "overclocking": "布尔值，是否支持超频",
-      "xmp_support": "布尔值，XMP支持",
-      "temperature_monitoring": "布尔值，温度监控支持"
-    },
-    "benchmarks": {
-      "geekbench6": {
-        "single_core": "浮点数，Geekbench 6单核分数",
-        "multi_core": "浮点数，Geekbench 6多核分数",
-        "version": "字符串，测试版本"
-      },
-      "cinebench_r23": {
-        "single_core": "浮点数，Cinebench R23单核分数",
-        "multi_core": "浮点数，Cinebench R23多核分数"
-      },
-      "cinebench_r24": {
-        "single_core": "浮点数，Cinebench R24单核分数",
-        "multi_core": "浮点数，Cinebench R24多核分数"
-      },
-      "3dmark_cpu": {
-        "single_thread": "浮点数，3DMark CPU单线程分数",
-        "multi_thread": "浮点数，3DMark CPU多线程分数"
-      },
-      "passmark": {
-        "cpu_mark": "浮点数，PassMark CPU分数",
-        "single_thread_mark": "浮点数，PassMark单线程分数"
-      }
-    },
-    "ranking": {
-      "overall_rank": "整数，综合排名",
-      "single_core_rank": "整数，单核性能排名",
-      "multi_core_rank": "整数，多核性能排名",
-      "gaming_rank": "整数，游戏性能排名",
-      "ai_rank": "整数，AI性能排名",
-      "tier_level": "字符串，梯队等级（S+/S/A+/A/B+/B/C）",
-      "rank_change": "整数，排名变化（+1/-1/0）"
-    },
-    "scores": {
-      "overall_score": "浮点数，综合分数",
-      "single_core_score": "浮点数，单核分数",
-      "multi_core_score": "浮点数，多核分数",
-      "gaming_score": "浮点数，游戏分数",
-      "ai_score": "浮点数，AI分数"
-    },
-    "pricing": {
-      "launch_price_usd": "浮点数，首发价格（美元）",
-      "current_price_usd": "浮点数，当前价格（美元）",
-      "launch_price_cny": "浮点数，首发价格（人民币）",
-      "current_price_cny": "浮点数，当前价格（人民币）",
-      "price_range": "字符串，价格区间",
-      "value_score": "浮点数，性价比评分"
-    },
-    "platform": {
-      "motherboard_chipsets": "数组，兼容主板芯片组",
-      "supported_os": "数组，支持的操作系统",
-      "release_year": "整数，发布年份"
-    },
-    "physical": {
-      "package_type": "字符串，封装类型（如 µOPGA-1331）",
-      "package_size": "字符串，封装尺寸",
-      "transistors": "字符串，晶体管数量（如 4,150 million）",
-      "die_size": "字符串，晶圆尺寸（如 74 mm²）",
-      "io_die_size": "字符串，I/O芯片尺寸（如 125 mm²）",
-      "weight": "字符串，重量"
-    },
-    "thermal": {
-      "max_temperature": "字符串，最高温度（°C）",
-      "t_case_max": "字符串，外壳最高温度（如 95°C）",
-      "thermal_design_power": "字符串，热设计功耗",
-      "junction_temperature": "字符串，结温"
-    }
-  }
+}
 }
