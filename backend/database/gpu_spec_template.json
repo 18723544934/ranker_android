@@ -1,215 +1,99 @@
 {
-  "gpu_spec_template": {
-    "basic_info": {
-      "id": "整数，硬件唯一标识",
-      "name": "字符串，GPU完整名称",
-      "brand": "字符串，品牌（NVIDIA/AMD/Apple/高通/联发科/华为等）",
-      "series": "字符串，系列名称（如 GeForce RTX 40 Series）",
-      "model": "字符串，型号编号（如 RTX 4090）",
-      "part_number": "字符串，部件编号",
-      "category": "字符串，分类（PC_GPU/MOBILE_GPU/INTEGRATED）",
-      "market": "字符串，市场定位（Desktop/Mobile/Server/Workstation）",
-      "codename": "字符串，研发代号（如 Ada Lovelace/Blackwell）",
-      "architecture": "字符串，架构名称",
-      "launch_date": "字符串，发布日期（YYYY-MM-DD）",
-      "announced_date": "字符串，发布日期（YYYY-MM-DD）",
-      "production_status": "字符串，生产状态（Active/Discontinued/Upcoming）",
-      "launch_price_usd": "浮点数，首发价格（美元）",
-      "generation": "字符串，代次（如 NVIDIA GeForce 50）",
-      "predecessor": "字符串，前代产品系列",
-      "successor": "字符串，后继产品系列"
-    },
-    "core_config": {
-      "cuda_cores": "整数，CUDA核心数（NVIDIA）",
-      "stream_processors": "整数，流处理器数（AMD）",
-      "tensor_cores": "整数，Tensor核心数",
-      "rt_cores": "整数，光线追踪核心数",
-      "compute_units": "整数，计算单元数（AMD）",
-      "shader_units": "整数，着色器单元数",
-      "texture_units": "整数，纹理单元数（TMUs）",
-      "render_output_units": "整数，渲染输出单元数（ROPs）",
-      "sm_count": "整数，流式多处理器数量（NVIDIA SM）",
-      "rt_acceleration_units": "整数，光线追踪加速单元",
-      "execution_units": "整数，执行单元数",
-      "tensor_ops_per_second": "字符串，Tensor运算能力（如 1.3 TBLOPS）"
-    },
-    "cache": {
-      "l1_cache": "字符串，L1缓存（如 128 KB per SM）",
-      "l2_cache": "字符串，L2缓存（如 96 MB）",
-      "l3_cache": "字符串，L3缓存（如有）"
-    },
-    "clock_speed": {
-      "base_clock": "浮点数，基础频率（MHz）",
-      "boost_clock": "浮点数，加速频率（MHz）",
-      "game_clock": "浮点数，游戏频率（MHz）",
-      "max_clock": "浮点数，最大频率（MHz）",
-      "memory_clock": "字符串，显存频率（如 1750 MHz 28 Gbps effective）",
-      "effective_memory_clock": "字符串，等效显存频率",
-      "shader_clock": "浮点数，着色器频率（MHz）"
-    },
-    "memory": {
-      "vram_size": "字符串，显存容量（如 32 GB）",
-      "vram_type": "字符串，显存类型（GDDR6/GDDR6X/GDDR7/HBM3等）",
-      "memory_bus_width": "整数，显存位宽（bit）",
-      "memory_bandwidth": "字符串，显存带宽（如 1.79 TB/s）",
-      "memory_channels": "整数，显存通道数",
-      "memory_interface": "字符串，显存接口",
-      "ecc_support": "布尔值，是否支持ECC显存"
-    },
-    "power": {
-      "tdp": "字符串，热设计功耗（如 575 W）",
-      "tdp_upgrade": "字符串，TDP升级支持",
-      "board_power_limit": "字符串，板卡功耗限制",
-      "minimum_power": "字符串，最低功耗",
-      "recommended_psu": "字符串，推荐电源功率（如 950W）"
-    },
-    "interface": {
-      "bus_interface": "字符串，总线接口（PCIe 5.0 x16/PCIe 4.0 x16等）",
-      "pcie_version": "字符串，PCIe版本",
-      "pcie_lanes": "整数，PCIe通道数",
-      "slot_width": "字符串，插槽宽度（如 Dual-slot/Full-height）",
-      "power_connectors": "字符串，供电接口（如 1x 16-pin/3x 8-pin）",
-      "nvlink_support": "布尔值，是否支持NVLink",
-      "sli_support": "布尔值，是否支持SLI",
-      "crossfire_support": "布尔值，是否支持CrossFire"
-    },
-    "display": {
-      "display_outputs": "数组，显示输出接口（如 1x HDMI 2.1b 3x DisplayPort 2.1b）",
-      "max_displays": "整数，最大支持显示器数量",
-      "max_resolution": "字符串，最大分辨率（如 7680x4320）",
-      "hdr_support": "布尔值，是否支持HDR",
-      "vrr_support": "布尔值，是否支持可变刷新率",
-      "hdmi_version": "字符串，HDMI版本",
-      "dp_version": "字符串，DisplayPort版本"
-    },
-    "video": {
-      "video_decode_engine": "字符串，视频解码引擎（如 NVDEC/AMD Video Engine）",
-      "video_encode_engine": "字符串，视频编码引擎（如 NVENC/AMD Video Codec Engine）",
-      "av1_support": "布尔值，是否支持AV1编码/解码",
-      "h265_support": "布尔值，是否支持H.265",
-      "h264_support": "布尔值，是否支持H.264",
-      "vp9_support": "布尔值，是否支持VP9",
-      "max_video_resolution": "字符串，最大视频分辨率",
-      "max_fps": "整数，最大帧率"
-    },
-    "api_support": {
-      "directx_version": "字符串，DirectX版本（如 12 Ultimate (12_2)）",
-      "vulkan_version": "字符串，Vulkan版本（如 1.4）",
-      "opengl_version": "字符串，OpenGL版本（如 4.6）",
-      "opencl_version": "字符串，OpenCL版本（如 3.0）",
-      "metal_support": "布尔值，是否支持Metal",
-      "dlss_support": "布尔值，是否支持DLSS",
-      "fsr_support": "布尔值，是否支持FSR",
-      "ray_tracing_support": "布尔值，是否支持光线追踪",
-      "tensorrt_support": "布尔值，是否支持TensorRT",
-      "cuda_version": "字符串，CUDA版本（如 12.0）",
-      "shader_model": "字符串，着色器模型（如 6.9）"
-    },
-    "features": {
-      "overclocking": "布尔值，是否支持超频",
-      "rgb_lighting": "布尔值，是否有RGB灯效",
-      "fan_count": "整数，风扇数量",
-      "cooler_type": "字符串，散热器类型（如三风扇/双风扇/一体式水冷）",
-      "zero_fan_mode": "布尔值，是否支持零风扇模式",
-      "gpu_boost": "字符串，GPU Boost技术版本",
-      "precision_modes": "数组，支持的精度模式（FP32/FP16/INT8/TF32等）",
-      "nvenc_support": "布尔值，是否支持NVENC",
-      "nvdec_support": "布尔值，是否支持NVDEC"
-    },
-    "theoretical_performance": {
-      "pixel_rate": "字符串，像素填充率（如 423.6 GPixel/s）",
-      "texture_rate": "字符串，纹理填充率（如 1,636.8 GTexel/s）",
-      "fp16_performance": "字符串，FP16性能（如 104.8 TFLOPS）",
-      "fp32_performance": "字符串，FP32性能（如 104.8 TFLOPS）",
-      "fp64_performance": "字符串，FP64性能（如 1.637 TFLOPS）",
-      "tensor_performance": "字符串，Tensor性能",
-      "rt_performance": "字符串，光线追踪性能"
-    },
-    "benchmarks": {
-      "3dmark_time_spy": {
-        "graphics_score": "浮点数，图形分数",
-        "cpu_score": "浮点数，CPU分数",
-        "total_score": "浮点数，总分"
-      },
-      "3dmark_fire_strike": {
-        "graphics_score": "浮点数，图形分数",
-        "cpu_score": "浮点数，CPU分数",
-        "total_score": "浮点数，总分"
-      },
-      "3dmark_port_royal": {
-        "score": "浮点数，光线追踪分数"
-      },
-      "3dmark_speed_way": {
-        "graphics_score": "浮点数，图形分数",
-        "total_score": "浮点数，总分"
-      },
-      "timespy_extreme": {
-        "graphics_score": "浮点数，图形分数"
-      },
-      "cinebench_r23": {
-        "gpu_score": "浮点数，GPU分数"
-      },
-      "passmark": {
-        "gpu_mark": "浮点数，PassMark GPU分数",
-        "2d_mark": "浮点数，2D分数",
-        "3d_mark": "浮点数，3D分数"
-      }
-    },
-    "ranking": {
-      "overall_rank": "整数，综合排名",
-      "gaming_rank": "整数，游戏性能排名",
-      "ray_tracing_rank": "整数，光线追踪排名",
-      "ai_rank": "整数，AI性能排名",
-      "tier_level": "字符串，梯队等级（S+/S/A+/A/B+/B/C）",
-      "rank_change": "整数，排名变化（+1/-1/0）"
-    },
-    "scores": {
-      "overall_score": "浮点数，综合分数",
-      "gaming_score": "浮点数，游戏分数",
-      "ray_tracing_score": "浮点数，光线追踪分数",
-      "ai_score": "浮点数，AI分数"
-    },
-    "pricing": {
-      "launch_price_usd": "浮点数，首发价格（美元）",
-      "current_price_usd": "浮点数，当前价格（美元）",
-      "launch_price_cny": "浮点数，首发价格（人民币）",
-      "current_price_cny": "浮点数，当前价格（人民币）",
-      "price_range": "字符串，价格区间",
-      "value_score": "浮点数，性价比评分",
-      "price_links": "数组，价格链接（如 Amazon/NewEgg链接）"
-    },
-    "platform": {
-      "supported_os": "数组，支持的操作系统",
-      "recommended_motherboard": "字符串，推荐主板",
-      "release_year": "整数，发布年份"
-    },
-    "physical": {
-      "length": "字符串，长度（如 304 mm 12 inches）",
-      "width": "字符串，宽度（如 40 mm 1.6 inches）",
-      "height": "字符串，高度（如 137 mm 5.4 inches）",
-      "weight": "字符串，重量（如 1814 g）",
-      "transistors": "字符串，晶体管数量（如 92,200 million）",
-      "die_size": "字符串，晶圆尺寸（如 750 mm²）",
-      "package_type": "字符串，封装类型",
-      "process_node": "字符串，制程工艺（如 TSMC 4N FinFET）",
-      "process_type": "字符串，工艺类型（如 4N FinFET）",
-      "process_size": "字符串，工艺尺寸（如 5 nm）",
-      "foundry": "字符串，代工厂（如 TSMC）",
-      "density": "字符串，晶体管密度（如 122.9M / mm²）",
-      "gpu_variant": "字符串，GPU变体（如 GB202-300-A1）",
-      "board_number": "字符串，板卡编号（如 PG145 SKU 30）"
-    },
-    "thermal": {
-      "max_temperature": "字符串，最高温度（°C）",
-      "t_case_max": "字符串，外壳最高温度",
-      "thermal_design_power": "字符串，热设计功耗",
-      "junction_temperature": "字符串，结温",
-      "cooling_solution": "字符串，散热方案"
-    },
-    "software": {
-      "driver_support": "字符串，驱动支持（如 Active/NVIDIA Studio/Game Ready）",
-      "software_features": "数组，软件功能（G-SYNC/FreeSync/ShadowPlay等）",
-      "sdk_support": "数组，支持的SDK（CUDA Toolkit/Radeon Pro Software等）"
-    }
+  "basic_info": {
+    "id": "整数，存储于数据库时的硬件唯一标识",
+    "name": "字符串，GPU完整名称（如 NVIDIA GeForce RTX 4090）",
+    "brand": "字符串，品牌（NVIDIA/AMD/Intel/Apple/高通等）",
+    "series": "字符串，系列名称（如 GeForce RTX 40 Series）",
+    "model": "字符串，型号编号（如 RTX 4090）",
+    "category": "字符串，分类（PC_GPU/MOBILE_GPU/INTEGRATED）",
+    "market": "字符串，市场定位（Desktop/Mobile/Workstation）",
+    "codename": "字符串，研发代号（如 Ada Lovelace）",
+    "architecture": "字符串，架构名称（如 Ada Lovelace / RDNA 3）",
+    "launch_date": "字符串，发布日期（YYYY-MM-DD）"
+  },
+  "core_config": {
+    "cuda_cores": "整数，CUDA核心数（NVIDIA专用，AMD可填0）",
+    "stream_processors": "整数，流处理器数（AMD专用，NVIDIA可填0）",
+    "tensor_cores": "整数，Tensor核心数（NVIDIA）",
+    "rt_cores": "整数，光线追踪核心数",
+    "compute_units": "整数，计算单元数（AMD）或执行单元（Intel）",
+    "texture_units": "整数，纹理单元数（TMUs）",
+    "render_output_units": "整数，渲染输出单元数（ROPs）",
+    "sm_count": "整数，流式多处理器数量（NVIDIA SM）"
+  },
+  "clock_speed": {
+    "base_clock": "浮点数，基础频率（MHz）",
+    "boost_clock": "浮点数，加速频率（MHz）",
+    "effective_memory_clock": "字符串，等效显存频率（如 28 Gbps）"
+  },
+  "memory": {
+    "vram_size": "字符串，显存容量（如 32 GB）",
+    "vram_type": "字符串，显存类型（GDDR6 / GDDR6X / GDDR7 / HBM3）",
+    "memory_bus_width": "整数，显存位宽（bit）",
+    "memory_bandwidth": "字符串，显存带宽（如 1.79 TB/s）",
+    "ecc_support": "布尔值，是否支持ECC显存"
+  },
+  "power": {
+    "tdp": "字符串，热设计功耗（如 575 W）",
+    "recommended_psu": "字符串，推荐电源功率（如 950W）"
+  },
+  "interface": {
+    "bus_interface": "字符串，总线接口（PCIe 5.0 x16/PCIe 4.0 x16等）",
+    "pcie_version": "字符串，PCIe版本",
+    "pcie_lanes": "整数，PCIe通道数",
+    "slot_width": "字符串，插槽宽度（如 Dual-slot/Full-height）",
+    "power_connectors": "字符串，供电接口（如 1x 16-pin/3x 8-pin）"
+  },
+  "display": {
+    "display_outputs": "数组，显示输出接口（如 [HDMI 2.1b, DisplayPort 2.1b]）",
+    "max_displays": "整数，最大支持显示器数量",
+    "max_resolution": "字符串，最大分辨率（如 7680x4320）",
+    "hdr_support": "布尔值，是否支持HDR",
+    "vrr_support": "布尔值，是否支持可变刷新率",
+    "hdmi_version": "字符串，HDMI版本"
+  },
+  "video": {
+    "video_encode_engine": "字符串，视频编码引擎（如 NVENC / AMD VCE）",
+    "video_decode_engine": "字符串，视频解码引擎（如 NVDEC / AMD VCE）",
+    "av1_support": "布尔值，是否支持AV1编解码",
+    "h265_support": "布尔值，是否支持H.265",
+    "vp9_support": "布尔值，是否支持VP9"
+  },
+  "api_support": {
+    "directx_version": "字符串，DirectX版本（如 12 Ultimate）",
+    "vulkan_version": "字符串，Vulkan版本（如 1.4）",
+    "opengl_version": "字符串，OpenGL版本（如 4.6）",
+    "opencl_version": "字符串，OpenCL版本（如 3.0）",
+    "dlss_support": "布尔值，是否支持DLSS",
+    "fsr_support": "布尔值，是否支持FSR",
+    "ray_tracing_support": "布尔值，是否支持光线追踪"
+  },
+  "features": {
+    "overclocking": "布尔值，是否支持超频",
+    "cooler_type": "字符串，散热器类型（如三风扇/双风扇/一体式水冷）",
+    "gpu_boost": "字符串，GPU Boost技术版本"
+  },
+  "benchmarks": {
+    "3dmark_time_spy_graphics": "浮点数，Time Spy 图形分数",
+    "3dmark_time_spy_total": "浮点数，Time Spy 总分",
+    "3dmark_fire_strike_graphics": "浮点数，Fire Strike 图形分数",
+    "3dmark_port_royal_score": "浮点数，Port Royal 光追分数",
+    "3dmark_speed_way_graphics": "浮点数，Speed Way 图形分数",
+    "passmark_gpu": "浮点数，PassMark GPU 总分数"
+  },
+  "pricing": {
+    "launch_price_usd": "浮点数，首发价格（美元）",
+    "launch_price_cny": "浮点数，首发价格（人民币）"
+  },
+  "physical": {
+    "length": "字符串，显卡长度（装机兼容性参考）",
+    "process_node": "字符串，制程工艺（如 TSMC 4N FinFET）",
+    "foundry": "字符串，代工厂（如 TSMC）"
+  },
+  "thermal": {
+    "max_temperature": "字符串，最高温度（°C）"
+  },
+  "software": {
+    "driver_support": "字符串，驱动支持（如 Active/NVIDIA Studio/Game Ready）"
   }
 }

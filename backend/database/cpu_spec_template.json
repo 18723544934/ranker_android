@@ -1,5 +1,4 @@
 {
-  "cpu_spec_template": {
   "basic_info": {
     "id": "整数，存储于数据库时的硬件唯一标识",
     "name": "字符串，CPU完整名称（如 AMD Ryzen 9 7950X）",
@@ -46,9 +45,40 @@
     "memory_channels": "整数，内存通道数",
     "ecc_support": "布尔值，是否支持ECC"
   },
-    "power": {
-      "tdp": "字符串，热设计功耗（如 65 W）",
-      "max_power": "字符串，最大功耗（MTP / PPT）（如 253 W）"
-    },
-}
+  "power": {
+    "tdp": "字符串，热设计功耗（如 65 W）",
+    "max_power": "字符串，最大功耗（MTP / PPT）（如 253 W）"
+  },
+  "interface": {
+    "socket": "字符串，CPU插槽类型（如 AM5 / LGA1851）",
+    "pcie_version": "字符串，PCIe版本（如 PCIe 5.0）",
+    "pcie_lanes": "整数，可用PCIe通道总数"
+  },
+  "graphics": {
+    "igpu_name": "字符串，核显名称（如 UHD Graphics 770）",
+    "igpu_clock": "浮点数，核显频率（GHz）",
+    "igpu_tech": "字符串，核显架构技术"
+  },
+  "features": {
+    "virtualization": "字符串，虚拟化技术（如 Intel VT-x / AMD-V）",
+    "overclocking": "布尔值，是否支持超频",
+    "xmp_support": "布尔值，是否支持XMP/EXPO内存超频"
+  },
+  "benchmarks": {
+    "geekbench6_single": "浮点数，Geekbench 6 单核分数",
+    "geekbench6_multi": "浮点数，Geekbench 6 多核分数",
+    "cinebench_r23_single": "浮点数，Cinebench R23 单核分数",
+    "cinebench_r23_multi": "浮点数，Cinebench R23 多核分数",
+    "cinebench_r24_single": "浮点数，Cinebench R24 单核分数（可选）",
+    "cinebench_r24_multi": "浮点数，Cinebench R24 多核分数（可选）",
+    "passmark_cpu": "浮点数，PassMark CPU 总分数",
+    "passmark_single": "浮点数，PassMark 单线程分数"
+  },
+  "pricing": {
+    "launch_price_usd": "浮点数，首发价格（美元）",
+    "launch_price_cny": "浮点数，首发价格（人民币）"
+  },
+  "platform": {
+    "motherboard_chipsets": "数组，兼容主板芯片组"
+  }
 }
